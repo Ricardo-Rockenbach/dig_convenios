@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from openpyxl import load_workbook
 
 # =========================
 # CONFIGURAÇÕES
@@ -37,7 +38,35 @@ posicao_meses = {
     "DEZEMBRO": 344
 }
 
+def encontrar_linha_convenio(ws, posicao_mes, convenio):
+    
+    linha = posicao_mes
 
+    while True:
+        valor_celula = ws.cell(row=linha, column=1).value
+        
+        # se encontrou o convênio
+        if valor_celula == convenio:
+            return linha
+
+        # se chegou no próximo mês, parar
+        if valor_celula == "TOTAL":
+            return None
+
+        linha += 1  
+
+def escrever_valores(ws, linha, dados):
+
+    coluna_inicial = 6  # Coluna F
+
+    ws.cell(row=linha, column=coluna_inicial).value = dados["VALOR_CUSTO_M"]
+    ws.cell(row=linha, column=coluna_inicial + 1).value = dados["VALOR_VENDA_M"]
+
+    ws.cell(row=linha, column=coluna_inicial + 2).value = dados["VALOR_CUSTO_D"]
+    ws.cell(row=linha, column=coluna_inicial + 3).value = dados["VALOR_VENDA_D"]
+
+    ws.cell(row=linha, column=coluna_inicial + 4).value = dados["VALOR_CUSTO_T"]
+    ws.cell(row=linha, column=coluna_inicial + 5).value = dados["VALOR_VENDA_T"]
 
 # =========================
 # LEITURA DOS DADOS
@@ -72,11 +101,9 @@ df = df.dropna(subset=["CONVENIO"])
 # definir index como a coluna "CONVENIO"
 df = df.set_index("CONVENIO")
 # Remover os covenios com nome "CONVENIO"
-df = df[~df.index.str.contains("CONVENIO", case=False)]
+df = df[~df.index.astype(str).str.contains("CONVENIO", case=False)]
 # dropar a coluna "INDATA_INICIAL"
 df = df.drop(columns=["INDATA_INICIAL"])
-
-
 
 
 # =========================
@@ -86,12 +113,39 @@ df = df.drop(columns=["INDATA_INICIAL"])
 # criar a pasta "data/extracao" se ela não existir
 os.makedirs("data/extracao", exist_ok=True)
 
+# abrir planilha oficial
+wb = load_workbook(r"data\Custo Receita 2025 Int.xlsx")
+ws = wb.active
+
+for convenio, df_convenio in df.groupby(level=0):
+
+    for _, row in df_convenio.iterrows():
+
+        mes_nome = row["MES_NOME"]
+
+        linha_mes = posicao_meses[mes_nome]
+
+        linha_convenio = encontrar_linha_convenio(ws, linha_mes, convenio)
+
+        if linha_convenio is not None:
+
+            escrever_valores(ws, linha_convenio, row)
+
+        else:
+            print(f"Convênio não encontrado: {convenio} em {mes_nome}")
+
 # criar uma nova planilha para cada convenio
 for convenio, df_convenio in df.groupby(level=0):
     print(f"Processando convênio: {convenio}")
     # ordenar o dataframe por mes
     df_convenio = df_convenio.sort_values("MES")
-    df_convenio.to_excel(f"data\extracao\{convenio}.xlsx")
+    df_convenio.to_excel(f"data\\extracao\\{convenio}.xlsx")
 
-print(df)
+wb.save(r"data\Custo Receita 2025 Int.xlsx")
+# Visualização dos dados
+#print(df)
 
+#print(ws["A3"].value)
+
+
+#print(encontrar_linha_convenio(ws, 34, "UNIMED"))
