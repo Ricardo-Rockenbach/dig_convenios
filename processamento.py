@@ -1,8 +1,9 @@
 from regras import obter_regra
-
 import pandas as pd
 import os
 from openpyxl import load_workbook
+from auxiliar import selecionar_DADOS_BRUTOS
+from auxiliar import selecionar_PLANILHA_CONVENIOS_20XX
 
 
 def processar_planilha():
@@ -81,8 +82,10 @@ def processar_planilha():
     # =========================
 
     # Ler o arquivo xlsx
+    caminho_arquivo = selecionar_DADOS_BRUTOS()
+
     df = pd.read_excel(
-        r"data\dados_brutos.xlsx",
+        caminho_arquivo,
         usecols=[
             "CONVENIO",
             "VALOR_CUSTO_M",
@@ -100,6 +103,7 @@ def processar_planilha():
     df["INDATA_INICIAL"] = pd.to_datetime(df["INDATA_INICIAL"], errors="coerce", dayfirst=True)
     df["MES"] = df["INDATA_INICIAL"].dt.month
     df["MES_NOME"] = df["MES"].map(meses)
+
 
     # =========================
     # LIMPEZA DOS DADOS
@@ -121,9 +125,11 @@ def processar_planilha():
 
     # criar a pasta "data/auditoria" se ela não existir
     os.makedirs("data/auditoria", exist_ok=True)
+    
 
     # abrir planilha oficial
-    wb = load_workbook(r"data\Custo Receita 2025 Int.xlsx")
+    caminho_arquivo = selecionar_PLANILHA_CONVENIOS_20XX()
+    wb = load_workbook(caminho_arquivo)
     ws = wb.active
 
     for convenio, df_convenio in df.groupby(level=0):
@@ -154,5 +160,5 @@ def processar_planilha():
         df_convenio = df_convenio.sort_values("MES")
         df_convenio.to_excel(f"data\\auditoria\\{convenio}.xlsx")
 
-    wb.save(r"data\Custo Receita 2025 Int.xlsx")
+    wb.save(caminho_arquivo)
 
