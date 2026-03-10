@@ -1,0 +1,27 @@
+Regras:
+
+- Acordo, CMI, Saude Maior, socios = Não tem lançamento de valor de venda     	OK
+- Sus = Apenas valor do custo de Diarias 								OK
+- Saude Maior Valor Total de Venda é fixo: R$ 400.000,00					OK
+
+
+- Acordo e Acordo Judicial - Total de Venda vem da planilha do Seu Jorge
+- Valor do SUS TOTAL VENDA - Vem da planilha da Josi
+- CMI - TOTAL VENDA - Vem da planilha do Ambulatório
+
+
+- O que o programa deve fazer:
+
+	- Pedir ao usuario que informe o caminho das planilhas que precisa para realizar o preenchimento;	OK
+	- Com base em cada planilha, completar os campos necessários na planilha principal
+	- Fazer uma verificação e alertar se algum campo não foi preenchido.
+
+
+
+Planilhas que o programa deve pedir:
+
+- "G:\Custos\Planilhas de Custo 2025\Rateios pelo valor total\ambulatório 2025.xls"
+- "Z:\contas.conv\Faturamento- Planilha Controle\CONTROLE FATURAMENTO - 2026.ods"
+
+Alternativa ter uma planilha que vai ser vinculada com essas para trazer as informações necessarias
+O programa lê essa planilha vinculada. (Serve como uma ponte)
