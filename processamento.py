@@ -72,6 +72,9 @@ def processar_planilha():
         ws.cell(row=linha, column=coluna_inicial + 4).value = dados["VALOR_CUSTO_T"]
         ws.cell(row=linha, column=coluna_inicial + 5).value = dados["VALOR_VENDA_T"]
 
+        if "SAUDE MAIOR" in dados.name:
+            ws.cell(row=linha, column=coluna_inicial + 7).value = dados["TOTAL_VENDA"]
+
 
     # =========================
     # LEITURA DOS DADOS
@@ -88,7 +91,8 @@ def processar_planilha():
             "VALOR_VENDA_D",
             "VALOR_CUSTO_T",
             "VALOR_VENDA_T", 
-            "INDATA_INICIAL"
+            "INDATA_INICIAL",
+            "TOTAL_VENDA"
     ],
     )
 
@@ -115,8 +119,8 @@ def processar_planilha():
     # CRIAR PLANILHAS POR CONVÊNIO
     # =========================
 
-    # criar a pasta "data/extracao" se ela não existir
-    os.makedirs("data/extracao", exist_ok=True)
+    # criar a pasta "data/auditoria" se ela não existir
+    os.makedirs("data/auditoria", exist_ok=True)
 
     # abrir planilha oficial
     wb = load_workbook(r"data\Custo Receita 2025 Int.xlsx")
@@ -148,7 +152,7 @@ def processar_planilha():
         print(f"Processando convênio: {convenio}")
         # ordenar o dataframe por mes
         df_convenio = df_convenio.sort_values("MES")
-        df_convenio.to_excel(f"data\\extracao\\{convenio}.xlsx")
+        df_convenio.to_excel(f"data\\auditoria\\{convenio}.xlsx")
 
     wb.save(r"data\Custo Receita 2025 Int.xlsx")
 

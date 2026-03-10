@@ -1,5 +1,4 @@
 # regras/base.py
-
 class RegraBase:
 
     def aplicar(self, dados):
