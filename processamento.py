@@ -161,4 +161,6 @@ def processar_planilha():
         df_convenio.to_excel(f"data\\auditoria\\{convenio}.xlsx")
 
     wb.save(caminho_arquivo)
+    # fechar o arquivo para liberar o acesso
+    wb.close()
 
