@@ -4,7 +4,8 @@ import os
 from openpyxl import load_workbook
 from auxiliar import selecionar_DADOS_BRUTOS
 from auxiliar import selecionar_PLANILHA_CONVENIOS_20XX
-
+from valores_esp_convenios.sus import pos_processamentoSUS
+from valores_esp_convenios.acordo import pos_processamentoACORDO
 
 def processar_planilha():
     # =========================
@@ -76,6 +77,27 @@ def processar_planilha():
         if "SAUDE MAIOR" in dados.name:
             ws.cell(row=linha, column=coluna_inicial + 7).value = dados["TOTAL_VENDA"]
 
+    def escrever_valoresSUS(ws, linha, dados):
+        coluna_inicial = 13  # Coluna M
+
+    # importar os valores do SUS do dataframe do SUS e escrever na planilha
+        if "SUS" in dados.name:
+            mes_nome = str(row["MES_NOME"]).strip().upper()
+            ws.cell(row=linha, column=coluna_inicial).value = df_sus.loc[mes_nome, "VALOR_SUS"]
+    
+    # Importar os valores do ACORDO do dataframe do ACORDO e escrever na planilha
+        if "ACORDO" in dados.name:
+            mes_nome = str(row["MES_NOME"]).strip().upper()
+            ws.cell(row=linha, column=coluna_inicial).value = df_acordo.loc[mes_nome, "VALOR_ACORDO"]
+    
+        if "ACORDO JUDICIAL" in dados.name:
+            mes_nome = str(row["MES_NOME"]).strip().upper()
+            ws.cell(row=linha, column=coluna_inicial).value = df_acordo.loc[mes_nome, "VALOR_ACORDO_JUDICIAL"]
+        
+        if "C.M.I" in dados.name:
+            mes_nome = str(row["MES_NOME"]).strip().upper()
+            ws.cell(row=linha, column=coluna_inicial).value = df_acordo.loc[mes_nome, "VALOR_CMI"]
+
 
     # =========================
     # LEITURA DOS DADOS
@@ -126,6 +148,8 @@ def processar_planilha():
     # criar a pasta "data/auditoria" se ela não existir
     os.makedirs("data/auditoria", exist_ok=True)
     
+    df_sus = pos_processamentoSUS()  # Chama a função de pós-processamento do SUS para obter os dados do SUS
+    df_acordo = pos_processamentoACORDO()  # Chama a função de pós-processamento do ACORDO para obter os dados do ACORDO
 
     # abrir planilha oficial
     caminho_arquivo = selecionar_PLANILHA_CONVENIOS_20XX()
@@ -149,6 +173,7 @@ def processar_planilha():
             if linha_convenio is not None:
 
                 escrever_valores(ws, linha_convenio, row)
+                escrever_valoresSUS(ws, linha_convenio, row)
 
             else:
                 print(f"Convênio não encontrado: {convenio} em {mes_nome}")
@@ -159,6 +184,7 @@ def processar_planilha():
         # ordenar o dataframe por mes
         df_convenio = df_convenio.sort_values("MES")
         df_convenio.to_excel(f"data\\auditoria\\{convenio}.xlsx")
+
 
     wb.save(caminho_arquivo)
     # fechar o arquivo para liberar o acesso

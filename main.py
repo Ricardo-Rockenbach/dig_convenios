@@ -1,5 +1,4 @@
 from processamento import processar_planilha
-from pos_processamento import pos_processamento
 
 def main():
     print("Iniciando processamento da planilha...")
@@ -8,7 +7,7 @@ def main():
 
     print("Processamento finalizado.")
 
-    pos_processamento()
+    #pos_processamentoSUS()
 
 if __name__ == "__main__":
     main()

@@ -22,3 +22,23 @@ def selecionar_PLANILHA_CONVENIOS_20XX():
     )
 
     return caminho
+    
+def selecionar_PLANILHA_SUS():
+    Tk().withdraw()
+
+    caminho = askopenfilename(
+        title="Selecione a planilha SUS",
+        filetypes=[("Arquivos Excel", "*.xlsx *.xls")]
+    )
+
+    return caminho
+
+def selecionar_PLANILHA_ACORDO():
+    Tk().withdraw()
+
+    caminho = askopenfilename(
+        title="Selecione a planilha ACORDO",
+        filetypes=[("Arquivos Excel", "*.xlsx *.xls")]
+    )
+
+    return caminho
