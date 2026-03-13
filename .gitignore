@@ -13,6 +13,7 @@ __pycache__/
 *.log
 *.tmp
 
-# Arquivos da pasta data 
-data/
+# Arquivos da pasta data e subpastas
+data/*.xlsx
+data/**/*.xlsx
 
